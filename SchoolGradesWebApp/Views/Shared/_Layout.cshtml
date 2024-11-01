@@ -1,0 +1,406 @@
+﻿
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]Grades web App</title>
+    <link rel="stylesheet" href="~/css/site.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"> 
+</head>
+<style>
+
+    .btn-add-student {
+        margin: 10px; 
+        padding: 10px 20px; 
+        font-size: 16px; 
+        border-radius: 5px; 
+        transition: background-color 0.3s, transform 0.3s; 
+        position: absolute; 
+        top: 5px; 
+        left: 10px;
+    }
+
+        .btn-add-student:hover {
+            background-color: #0056b3; 
+            transform: translateY(-2px); 
+        }
+
+
+    .stylish-heading {
+        font-family: 'Arial', sans-serif; 
+        font-size: 36px;
+        color: #007bff; 
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2); 
+        margin: 20px 0; 
+        letter-spacing: 1.5px; 
+    }
+
+
+    .update-btn, .delete-btn {
+        background: none;
+        border: none;
+        font-size: 24px;
+        cursor: pointer;
+        margin: 0 5px;
+    }
+
+        .update-btn:hover, .delete-btn:hover {
+            color: #007bff;
+        }
+</style>
+<body>
+
+    <h1>
+        <div>
+            <button class="btn btn-primary btn-add-student" data-toggle="modal" data-target="#addStudentModal">Add Student</button>
+        </div>
+    
+    </h1>
+ 
+    <!-- Delete Confirmation Modal -->
+
+    <div class="container">
+        @RenderBody()
+        
+        <!-- Modal -->
+        <div class="modal fade" id="addStudentModal" tabindex="-1" role="dialog" aria-labelledby="addStudentModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="addStudentModalLabel">Add Student</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="studentForm">
+                            <div class="form-group">
+                                <label for="studentName">Student Name:</label>
+                                <input type="text" class="form-control" id="studentName" required />
+                            </div>
+                            <div class="form-group">
+                                <label for="subjectName">Subject Name:</label>
+                                <input type="text" class="form-control" id="subjectName" required />
+                            </div>
+                            <div class="form-group">
+                                <label for="grade">Grade:</label>
+                                <input type="number" class="form-control" id="grade" min="0" max="100" required />
+                            </div>
+                            <button type="button" class="btn btn-primary" id="submitStudent">Add</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="updateStudentModal" tabindex="-1" role="dialog" aria-labelledby="updateStudentModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="updateStudentModalLabel">Update Student</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="updateStudentForm">
+                        <input type="hidden" id="updateStudentId" /> <!-- Hidden field for student ID -->
+                        <div class="form-group">
+                            <label for="updateStudentName">Student Name:</label>
+                            <input type="text" class="form-control" id="updateStudentName" required />
+                        </div>
+                        <div class="form-group">
+                            <label for="updateSubjectName">Subject Name:</label>
+                            <input type="text" class="form-control" id="updateSubjectName" required />
+                        </div>
+                        <div class="form-group">
+                            <label for="updateGrade">Grade:</label>
+                            <input type="number" class="form-control" id="updateGrade" min="0" max="100" required />
+                        </div>
+                        <button type="submit" class="btn btn-primary">Update</button> <!-- Change button type to submit -->
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <h2 class="text-center stylish-heading">Students Grade Web App</h2>
+    <table class="table table-bordered table-striped mt-4">
+        <thead class="thead-dark">
+            <tr>
+                <th>Student ID</th>
+                <th>Name</th>
+                <th>Subject</th>
+                <th>Grade</th>
+                <th>Status</th>
+                <th>Tools</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null && Model.Any())
+            {
+                foreach (var student in Model)
+                {
+                    decimal gradeValue;
+                    bool isNumeric = decimal.TryParse(student.Grade, out gradeValue);
+                    <tr>
+                        <td>@student.Id</td>
+                        <td>@student.Name ?? "N/A"</td>
+                        <td>@student.Subject ?? "N/A"</td>
+                        <td>@(isNumeric ? gradeValue.ToString("F2") : "N/A")</td>
+                        <td>@(isNumeric && gradeValue >= 50 ? "Pass" : "Fail")</td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="5" class="text-center">No students found.</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <footer>
+        <p>&copy; 2024 - School Grades Application</p>
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script> <!-- jQuery -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"></script> <!-- Bootstrap Popper.js -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <script src="~/js/site.js"></script>
+    <script>
+        let students = []; // Array to hold student data
+        let studentIdToDelete; // Variable to hold the ID of the student to delete
+
+        // Function to fetch and populate student data
+        async function loadStudentData() {
+            try {
+                const response = await fetch('/Students/GetAllStudents');
+                if (!response.ok) throw new Error('Network response was not ok');
+                const data = await response.json();
+                students = data.students; // Assuming the data structure contains a "students" array
+                populateStudentTable();
+            } catch (error) {
+                console.error('Error fetching students:', error);
+            }
+        }
+
+        function populateStudentTable() {
+            const tbody = document.querySelector('tbody');
+            tbody.innerHTML = ''; // Clear existing rows
+
+            students.forEach(student => {
+                const row = document.createElement('tr');
+                row.setAttribute('data-id', student.id); // Set data-id attribute for easy selection
+
+                // Determine status based on grade
+                const status = student.grade >= 75
+                    ? `<span style="color: green;">Pass</span>`
+                    : `<span style="color: red;">Fail</span>`;
+
+                row.innerHTML = `
+                    <td>${student.id || "N/A"}</td>
+                    <td>${student.name || "N/A"}</td>
+                    <td>${student.subject || "N/A"}</td>
+                    <td>${student.grade || "N/A"}</td>
+                    <td>${status}</td> <!-- Add status column with color -->
+                         <td>
+            <button class="update-btn" data-id="${student.id}" title="Update">
+                🖉
+            </button>
+            <button class="delete-btn" data-id="${student.id}" title="Delete">
+                🗑️
+            </button>
+        </td>
+
+                `;
+                tbody.appendChild(row);
+            });
+
+            // Attach event listener for delete buttons
+            const deleteButtons = document.querySelectorAll('.delete-btn');
+            deleteButtons.forEach(button => {
+                button.addEventListener('click', async function () {
+                    const row = this.closest('tr'); // Get the parent row of the clicked button
+                    const studentId = this.getAttribute('data-id'); // Get student ID
+
+                    if (confirm('Are you sure you want to delete this student?')) {
+                        try {
+                            // Call delete function to remove from database
+                            await deleteStudent(studentId);
+
+                            // Remove the row from the DOM after successful deletion
+                            row.remove();
+                        } catch (error) {
+                            console.error('Error deleting student:', error);
+                            alert('Failed to delete student. Please try again.');
+                        }
+                    }
+                });
+            });
+
+            // Attach event listener for update buttons
+            const updateButtons = document.querySelectorAll('.update-btn');
+            updateButtons.forEach(button => {
+                button.addEventListener('click', function () {
+                    const studentId = this.getAttribute('data-id'); // Get student ID
+                    const student = students.find(s => s.id == studentId); // Find the student object
+
+                    // Call function to show the update form and populate it with student details
+                    showUpdateForm(student);
+                });
+            });
+        }
+
+        function showUpdateForm(student) {
+
+            document.getElementById('updateStudentName').value = student.name;
+            document.getElementById('updateSubjectName').value = student.subject;
+            document.getElementById('updateGrade').value = student.grade;
+            document.getElementById('updateStudentId').value = student.id; 
+
+            $('#updateStudentModal').modal('show'); 
+
+     
+            const updateForm = document.getElementById('updateStudentForm');
+            updateForm.onsubmit = async function (e) {
+                e.preventDefault(); 
+
+          
+                const studentId = student.id; 
+                const name = document.getElementById('updateStudentName').value;
+                const subject = document.getElementById('updateSubjectName').value;
+                const grade = parseInt(document.getElementById('updateGrade').value); 
+
+             
+                try {
+                    const result = await updateStudent(studentId, name, subject, grade); 
+                    if (result.success) {
+                        alert('Student updated successfully!');
+                        populateStudentTable(); 
+                        $('#updateStudentModal').modal('hide'); 
+                        location.reload();
+                    } else {
+                        alert('Failed to update student. Please try again.');
+                    }
+                } catch (error) {
+                    console.error('Error updating student:', error);
+                    alert('Failed to update student. Please try again.');
+                }
+            };
+        }
+
+        async function updateStudent(studentId, name, subject, grade) {
+            const response = await fetch(`/Update/${studentId}/${encodeURIComponent(name)}/${encodeURIComponent(subject)}/${grade}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json' 
+                }
+            });
+
+            const responseText = await response.text(); 
+            console.log('Raw response:', responseText); 
+
+            if (!response.ok) {
+                throw new Error(responseText); 
+            }
+
+            return JSON.parse(responseText); 
+        }
+
+     
+
+
+        async function deleteStudent(studentId) {
+            try {
+                const response = await fetch(`Students/Delete/${studentId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    console.log('Student deleted successfully!');
+                
+                    location.reload(); 
+                } else {
+                    console.error('Error deleting student: Student not found.');
+                }
+            } catch (error) {
+                console.error('Error deleting student:', error);
+            }
+        }
+
+
+
+
+
+        const deleteButtons = document.querySelectorAll('.delete-btn');
+        deleteButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                const studentId = this.getAttribute('data-id'); 
+                deleteStudent(studentId); 
+            });
+        });
+
+    
+        document.addEventListener('DOMContentLoaded', loadStudentData);
+
+
+        function addStudent() {
+            var studentName = document.getElementById('studentName').value;
+            var subjectName = document.getElementById('subjectName').value;
+            var grade = document.getElementById('grade').value;
+
+      
+            if (isNaN(grade) || grade < 0 || grade > 100) {
+                alert('Grade must be a number between 0 and 100.');
+                return;
+            }
+
+         
+            fetch('/Students/Add', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ name: studentName, subject: subjectName, grade: grade })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data); 
+                    if (data.success) {
+                        alert('Student added successfully!');
+                        students = data.students; 
+                        populateStudentTable(); 
+                    } else {
+                        alert('Failed to add student. Please try again.');
+                    }
+
+                    document.getElementById('studentForm').reset();
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Failed to add student. Please try again.');
+                });
+        }
+
+
+        document.getElementById('submitStudent').addEventListener('click', addStudent);
+        document.addEventListener('DOMContentLoaded', function () {
+            loadStudentData();
+        });
+
+
+
+    </script>
+
+</body>
+</html>

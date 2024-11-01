@@ -1,0 +1,58 @@
+﻿@model IEnumerable<SchoolGradesWebApp.Models.Student>
+
+<h2>Student Grades</h2>
+
+<div class="mb-3">
+    <input type="text" id="searchInput" class="form-control" placeholder="Search by Student Name..." onkeyup="filterStudents()" />
+</div>
+
+<div class="mb-3">
+    <button class="btn btn-secondary" onclick="filterByRemarks('')">All</button>
+    <button class="btn btn-success" onclick="filterByRemarks('PASS')">PASS</button>
+    <button class="btn btn-danger" onclick="filterByRemarks('FAIL')">FAIL</button>
+</div>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Student Name</th>
+            <th>Subject Name</th>
+            <th>Grade</th>
+            <th>Remarks</th>
+        </tr>
+    </thead>
+    <tbody id="studentTable">
+      
+    </tbody>
+</table>
+
+<script>
+    function filterStudents() {
+        const input = document.getElementById("searchInput");
+        const filter = input.value.toLowerCase();
+        const table = document.getElementById("studentTable");
+        const tr = table.getElementsByTagName("tr");
+
+        for (let i = 0; i < tr.length; i++) {
+            const td = tr[i].getElementsByTagName("td")[0]; // Check first column for Student Name
+            if (td) {
+                const txtValue = td.textContent || td.innerText;
+                tr[i].style.display = txtValue.toLowerCase().indexOf(filter) > -1 ? "" : "none";
+            }
+        }
+    }
+
+    function filterByRemarks(remark) {
+        const table = document.getElementById("studentTable");
+        const tr = table.getElementsByTagName("tr");
+
+        for (let i = 0; i < tr.length; i++) {
+            const td = tr[i].getElementsByTagName("td")[3]; // Check fourth column for Remarks
+            if (td) {
+                const txtValue = td.textContent || td.innerText;
+                tr[i].style.display = remark === '' || txtValue === remark ? "" : "none";
+            }
+        }
+    }
+</script>
+
