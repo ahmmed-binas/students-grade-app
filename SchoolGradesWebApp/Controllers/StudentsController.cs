@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using MySql.Data.MySqlClient;
 using SchoolGradesWebApp.Models;
 using System.Collections.Generic;
@@ -16,6 +17,30 @@ public class StudentsController : Controller
         _context = context;
     }
 
+    [HttpPost]
+    public IActionResult Add([FromBody] Student student)
+    {
+        if (ModelState.IsValid)
+        {
+            using (var connection = new MySqlConnection(_connectionString))
+            {
+                connection.Open();
+                var command = connection.CreateCommand();
+                command.CommandText = "INSERT INTO students (student_name, subject_name, grade) VALUES (@StudentName, @SubjectName, @Grade)";
+                command.Parameters.AddWithValue("@StudentName", student.Name);
+                command.Parameters.AddWithValue("@SubjectName", student.Subject);
+                command.Parameters.AddWithValue("@Grade", student.Grade);
+
+                var result = command.ExecuteNonQuery();
+                if (result > 0)
+                {
+                    var students = GetStudents();
+                    return Json(new { success = true, students });
+                }
+            }
+        }
+        return Json(new { success = false });
+    }
     public IActionResult Index()
     {
         var students = GetStudents();

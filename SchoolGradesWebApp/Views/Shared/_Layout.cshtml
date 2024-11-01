@@ -108,7 +108,7 @@
                 </div>
                 <div class="modal-body">
                     <form id="updateStudentForm">
-                        <input type="hidden" id="updateStudentId" /> <!-- Hidden field for student ID -->
+                        <input type="hidden" id="updateStudentId" /> 
                         <div class="form-group">
                             <label for="updateStudentName">Student Name:</label>
                             <input type="text" class="form-control" id="updateStudentName" required />
@@ -165,7 +165,7 @@
     </table>
 
     <footer>
-        <p>&copy; 2024 - School Grades Application</p>
+        <p>&copy; 2024 - Ahmeds' students Grades App</p>
     </footer>
 
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script> <!-- jQuery -->
@@ -359,13 +359,13 @@
             var subjectName = document.getElementById('subjectName').value;
             var grade = document.getElementById('grade').value;
 
-      
+            // Validate the grade input
             if (isNaN(grade) || grade < 0 || grade > 100) {
                 alert('Grade must be a number between 0 and 100.');
                 return;
             }
 
-         
+            // Send a POST request to add a student
             fetch('/Students/Add', {
                 method: 'POST',
                 headers: {
@@ -375,11 +375,11 @@
             })
                 .then(response => response.json())
                 .then(data => {
-                    console.log(data); 
+                    console.log(data); // Log the response data
                     if (data.success) {
                         alert('Student added successfully!');
-                        students = data.students; 
-                        populateStudentTable(); 
+                        students = data.students; // Update the students array
+                        populateStudentTable(); // Populate the table with updated student data
                     } else {
                         alert('Failed to add student. Please try again.');
                     }
@@ -391,7 +391,6 @@
                     alert('Failed to add student. Please try again.');
                 });
         }
-
 
         document.getElementById('submitStudent').addEventListener('click', addStudent);
         document.addEventListener('DOMContentLoaded', function () {
